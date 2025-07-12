@@ -1,1 +1,1 @@
-#this folder contains images for wiki
+# this folder contains images for wiki
