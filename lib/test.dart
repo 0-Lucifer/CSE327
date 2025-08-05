@@ -3,13 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'firebase_options.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(const TestApp());
-}
+void main() => runApp(const TestApp());
 
 class TestApp extends StatelessWidget {
   const TestApp({super.key});
@@ -44,7 +38,6 @@ class _TestPageState extends State<TestPage> {
     final batch = _firestore.batch();
     final testCollection = _firestore.collection('test');
 
-    // Adding test data
     batch.set(testCollection.doc(), {'name': 'Alice', 'roll': 101});
     batch.set(testCollection.doc(), {'name': 'Bob', 'roll': 102});
     batch.set(testCollection.doc(), {'name': 'Charlie', 'roll': 103});
