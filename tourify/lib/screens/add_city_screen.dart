@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../models/city_memory.dart';
-import '../theme/app_theme.dart';
 
 /// Add New City Screen - Allows users to add a new travel destination
 /// Users can add any city from around the world to their memory collection
@@ -35,14 +34,28 @@ class _AddCityScreenState extends State<AddCityScreen> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: Color(0xFF1A237E),
           ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF1A237E)),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
-            decoration: AppTheme.goldAccentGradient,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFFD700).withOpacity(0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
             child: TextButton(
               onPressed: _isSaving ? null : _saveCity,
               child: _isSaving
@@ -66,7 +79,17 @@ class _AddCityScreenState extends State<AddCityScreen> {
         ],
       ),
       body: Container(
-        decoration: AppTheme.premiumBackground,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFF8F9FA),
+              Color(0xFFE3F2FD),
+              Color(0xFFBBDEFB),
+            ],
+          ),
+        ),
         child: SafeArea(
           child: Form(
             key: _formKey,
@@ -76,13 +99,11 @@ class _AddCityScreenState extends State<AddCityScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 20),
-                  _buildPremiumHeader(),
+                  _buildHeader(),
                   const SizedBox(height: 32),
-                  _buildPremiumCityField(),
+                  _buildCityField(),
                   const SizedBox(height: 20),
-                  _buildPremiumCountryField(),
-                  const SizedBox(height: 32),
-                  _buildPremiumExampleSection(),
+                  _buildCountryField(),
                 ],
               ),
             ),
@@ -92,11 +113,32 @@ class _AddCityScreenState extends State<AddCityScreen> {
     );
   }
 
-  /// Builds premium header section
-  Widget _buildPremiumHeader() {
+  /// Builds header section
+  Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: AppTheme.glassContainer,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.1),
+            const Color(0xFF3F51B5).withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A237E).withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -104,7 +146,25 @@ class _AddCityScreenState extends State<AddCityScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: AppTheme.navyGradient,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF1A237E),
+                      Color(0xFF283593),
+                      Color(0xFF3F51B5),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF1A237E).withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
                 child: const Icon(
                   Icons.add_location_alt,
                   color: Colors.white,
@@ -116,18 +176,20 @@ class _AddCityScreenState extends State<AddCityScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
+                    const Text(
                       'Add New Destination',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: AppTheme.primaryNavy,
+                      style: TextStyle(
+                        color: Color(0xFF1A237E),
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Expand your travel collection',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.primaryNavy.withOpacity(0.7),
+                      style: TextStyle(
+                        color: const Color(0xFF1A237E).withOpacity(0.7),
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -140,17 +202,38 @@ class _AddCityScreenState extends State<AddCityScreen> {
     );
   }
 
-  /// Builds premium city input field
-  Widget _buildPremiumCityField() {
+  /// Builds city input field
+  Widget _buildCityField() {
     return Container(
-      decoration: AppTheme.glassContainer,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.1),
+            const Color(0xFF3F51B5).withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A237E).withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       padding: const EdgeInsets.all(20),
       child: TextFormField(
         controller: _cityController,
         style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: AppTheme.primaryNavy,
+          color: Color(0xFF1A237E),
         ),
         decoration: InputDecoration(
           labelText: 'City Name',
@@ -159,8 +242,8 @@ class _AddCityScreenState extends State<AddCityScreen> {
             margin: const EdgeInsets.all(8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppTheme.primaryNavy, AppTheme.lightNavy],
+              gradient: const LinearGradient(
+                colors: [Color(0xFF1A237E), Color(0xFF3F51B5)],
               ),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -181,17 +264,38 @@ class _AddCityScreenState extends State<AddCityScreen> {
     );
   }
 
-  /// Builds premium country input field
-  Widget _buildPremiumCountryField() {
+  /// Builds country input field
+  Widget _buildCountryField() {
     return Container(
-      decoration: AppTheme.glassContainer,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.1),
+            const Color(0xFF3F51B5).withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A237E).withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       padding: const EdgeInsets.all(20),
       child: TextFormField(
         controller: _countryController,
         style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: AppTheme.primaryNavy,
+          color: Color(0xFF1A237E),
         ),
         decoration: InputDecoration(
           labelText: 'Country',
@@ -200,8 +304,8 @@ class _AddCityScreenState extends State<AddCityScreen> {
             margin: const EdgeInsets.all(8),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppTheme.primaryNavy, AppTheme.lightNavy],
+              gradient: const LinearGradient(
+                colors: [Color(0xFF1A237E), Color(0xFF3F51B5)],
               ),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -222,93 +326,7 @@ class _AddCityScreenState extends State<AddCityScreen> {
     );
   }
 
-  /// Builds premium example section
-  Widget _buildPremiumExampleSection() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: AppTheme.glassContainer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: AppTheme.goldAccentGradient,
-                child: const Icon(Icons.explore, color: Colors.white, size: 20),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Popular Destinations',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppTheme.primaryNavy,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          _buildPremiumExampleChips(),
-        ],
-      ),
-    );
-  }
 
-  /// Builds premium example destination chips
-  Widget _buildPremiumExampleChips() {
-    final examples = [
-      'Paris, France',
-      'Tokyo, Japan',
-      'New York, USA',
-      'London, UK',
-      'Dubai, UAE',
-      'Bangkok, Thailand',
-    ];
-
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: examples.map((example) {
-        final parts = example.split(', ');
-        return GestureDetector(
-          onTap: () => _fillExample(parts[0], parts[1]),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.primaryNavy.withOpacity(0.1),
-                  AppTheme.lightNavy.withOpacity(0.1),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppTheme.primaryNavy.withOpacity(0.2),
-                width: 1,
-              ),
-            ),
-            child: Text(
-              example,
-              style: TextStyle(
-                color: AppTheme.primaryNavy,
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  /// Fills form with example data
-  void _fillExample(String city, String country) {
-    setState(() {
-      _cityController.text = city;
-      _countryController.text = country;
-    });
-  }
 
   /// Saves the new city
   Future<void> _saveCity() async {

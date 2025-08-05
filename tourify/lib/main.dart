@@ -15,40 +15,58 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'screens/memory_screen.dart';
-import 'theme/app_theme.dart';
-
 /// Entry point for the Tourify application.
 /// 
-/// Initializes Firebase services and starts the Flutter app with
-/// premium theming and memory management capabilities.
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } catch (e) {
-    print('Firebase error: $e');
-  }
-  
+/// Starts the Flutter app with Navy Blue Glass Tempered design.
+/// Firebase initialization is temporarily disabled to fix white screen.
+void main() {
+  print('Starting Tourify app...');
   runApp(const TourifyApp());
 }
 
+// Commented out Firebase initialization to fix white screen issue
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   
+//   try {
+//     await Firebase.initializeApp(
+//       options: DefaultFirebaseOptions.currentPlatform,
+//     );
+//   } catch (e) {
+//     print('Firebase error: $e');
+//   }
+//   
+//   runApp(const TourifyApp());
+// }
+
 /// Root widget for the Tourify application.
 /// 
-/// Configures the MaterialApp with premium theming, sets up navigation,
-/// and defines the home screen as the memory management interface.
+/// Configures the MaterialApp with Navy Blue Glass Tempered design,
+/// sets up navigation, and defines the home screen.
 class TourifyApp extends StatelessWidget {
   /// Creates the root Tourify application widget.
   const TourifyApp({super.key});
 
-  /// Builds the MaterialApp with premium theme and navigation setup.
+  /// Builds the MaterialApp with Navy Blue Glass Tempered design.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Tourify - Premium Travel Memory Diary',
-      theme: AppTheme.premiumTheme,
+      title: 'Tourify - Travel Memory Diary',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF1A237E), // Navy Blue
+          brightness: Brightness.light,
+          primary: const Color(0xFF1A237E),
+          secondary: const Color(0xFF283593),
+          surface: const Color(0xFFF8F9FA),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          foregroundColor: Color(0xFF1A237E),
+        ),
+      ),
       home: const MemoryScreen(),
       debugShowCheckedModeBanner: false,
     );

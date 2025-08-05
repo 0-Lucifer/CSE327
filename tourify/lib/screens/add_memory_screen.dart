@@ -27,7 +27,11 @@ class _AddMemoryScreenState extends State<AddMemoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Color(0xFF1A237E)),
         title: Text('Add Memory - ${widget.cityName}'),
         actions: [
           TextButton(

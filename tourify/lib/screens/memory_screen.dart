@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'city_memory_detail_screen.dart';
 import 'add_city_screen.dart';
 import '../models/city_memory.dart';
-import '../theme/app_theme.dart';
 
 /// Main screen displaying the user's travel memories organized by city.
 /// 
@@ -59,6 +58,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('Building MemoryScreen...');
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -68,6 +68,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
             fontSize: 28,
             fontWeight: FontWeight.bold,
             letterSpacing: 0.5,
+            color: Color(0xFF1A237E), // Navy Blue
           ),
         ),
         centerTitle: true,
@@ -75,7 +76,17 @@ class _MemoryScreenState extends State<MemoryScreen> {
         elevation: 0,
       ),
       body: Container(
-        decoration: AppTheme.premiumBackground,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFF8F9FA), // Light background
+              Color(0xFFE3F2FD), // Light blue
+              Color(0xFFBBDEFB), // Navy blue tint
+            ],
+          ),
+        ),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -83,151 +94,24 @@ class _MemoryScreenState extends State<MemoryScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                _buildPremiumHeader(),
+                _buildHeader(),
                 const SizedBox(height: 30),
                 Expanded(
                   child: _cityMemories.isEmpty
-                      ? _buildPremiumEmptyState()
-                      : _buildPremiumCityGrid(),
+                      ? _buildEmptyState()
+                      : _buildCityGrid(),
                 ),
               ],
             ),
           ),
         ),
       ),
-      floatingActionButton: _buildPremiumFAB(),
+      floatingActionButton: _buildFAB(),
     );
   }
 
-  /// Builds grid view of city memory cards
-  Widget _buildCityGrid() {
-    return GridView.builder(
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.8,
-      ),
-      itemCount: _cityMemories.length,
-      itemBuilder: (context, index) {
-        final cityMemory = _cityMemories[index];
-        return _buildCityCard(cityMemory);
-      },
-    );
-  }
 
-  /// Builds individual city memory card
-  Widget _buildCityCard(CityMemory cityMemory) {
-    return GestureDetector(
-      onTap: () => _navigateToCityDetail(cityMemory),
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              flex: 3,
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(12),
-                  ),
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.teal.shade300,
-                      Colors.teal.shade600,
-                    ],
-                  ),
-                ),
-                child: const Icon(
-                  Icons.location_city,
-                  size: 48,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-            Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        cityMemory.cityName,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      '${cityMemory.photoCount} photos',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    Text(
-                      _formatDate(cityMemory.lastVisited),
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  /// Builds empty state when no memories exist
-  Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.photo_library_outlined,
-            size: 80,
-            color: Colors.grey[400],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No memories yet',
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.grey[600],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Start creating your travel diary!',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.grey[500],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _navigateToCityDetatail screen
   void _navigateToCityDetail(CityMemory cityMemory) {
     Navigator.push(
       context,
@@ -259,10 +143,31 @@ class _MemoryScreenState extends State<MemoryScreen> {
     });
   }
 
-  Widget _buildPremiumHeader() {
+  Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: AppTheme.glassContainer,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withOpacity(0.1),
+            const Color(0xFF3F51B5).withOpacity(0.1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1A237E).withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -271,8 +176,8 @@ class _MemoryScreenState extends State<MemoryScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [AppTheme.goldAccent, AppTheme.goldAccent.withOpacity(0.8)],
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD700), Color(0xFFFFB300)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -287,18 +192,20 @@ class _MemoryScreenState extends State<MemoryScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Your Premium Travel Diary',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        color: AppTheme.primaryNavy,
+                    const Text(
+                      'Your Travel Diary',
+                      style: TextStyle(
+                        color: Color(0xFF1A237E),
+                        fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       'Discover your memories in style',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppTheme.primaryNavy.withOpacity(0.7),
+                      style: TextStyle(
+                        color: const Color(0xFF1A237E).withOpacity(0.7),
+                        fontSize: 14,
                       ),
                     ),
                   ],
@@ -311,7 +218,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
     );
   }
 
-  Widget _buildPremiumCityGrid() {
+  Widget _buildCityGrid() {
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -322,23 +229,62 @@ class _MemoryScreenState extends State<MemoryScreen> {
       itemCount: _cityMemories.length,
       itemBuilder: (context, index) {
         final cityMemory = _cityMemories[index];
-        return _buildPremiumCityCard(cityMemory);
+        return _buildCityCard(cityMemory);
       },
     );
   }
 
-  Widget _buildPremiumCityCard(CityMemory cityMemory) {
+  Widget _buildCityCard(CityMemory cityMemory) {
     return GestureDetector(
       onTap: () => _navigateToCityDetail(cityMemory),
       child: Container(
-        decoration: AppTheme.glassContainer,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.1),
+              const Color(0xFF3F51B5).withOpacity(0.1),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.2),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF1A237E).withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Column(
           children: [
             Expanded(
               flex: 3,
               child: Container(
                 margin: const EdgeInsets.all(12),
-                decoration: AppTheme.navyGradient,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFF1A237E),
+                      Color(0xFF283593),
+                      Color(0xFF3F51B5),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFF1A237E).withOpacity(0.3),
+                      blurRadius: 15,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
                 child: Stack(
                   children: [
                     Center(
@@ -354,7 +300,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: AppTheme.goldAccent,
+                          color: const Color(0xFFFFD700),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: Text(
@@ -385,7 +331,7 @@ class _MemoryScreenState extends State<MemoryScreen> {
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.primaryNavy,
+                          color: Color(0xFF1A237E),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -396,14 +342,14 @@ class _MemoryScreenState extends State<MemoryScreen> {
                       '${cityMemory.photoCount} memories',
                       style: TextStyle(
                         fontSize: 12,
-                        color: AppTheme.primaryNavy.withOpacity(0.6),
+                        color: const Color(0xFF1A237E).withOpacity(0.6),
                       ),
                     ),
                     Text(
                       _formatDate(cityMemory.lastVisited),
                       style: TextStyle(
                         fontSize: 11,
-                        color: AppTheme.primaryNavy.withOpacity(0.5),
+                        color: const Color(0xFF1A237E).withOpacity(0.5),
                       ),
                     ),
                   ],
@@ -416,11 +362,32 @@ class _MemoryScreenState extends State<MemoryScreen> {
     );
   }
 
-  Widget _buildPremiumEmptyState() {
+  Widget _buildEmptyState() {
     return Center(
       child: Container(
         padding: const EdgeInsets.all(32),
-        decoration: AppTheme.glassContainer,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withOpacity(0.1),
+              const Color(0xFF3F51B5).withOpacity(0.1),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.2),
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF1A237E).withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -429,8 +396,8 @@ class _MemoryScreenState extends State<MemoryScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.primaryNavy.withOpacity(0.1),
-                    AppTheme.lightNavy.withOpacity(0.1),
+                    const Color(0xFF1A237E).withOpacity(0.1),
+                    const Color(0xFF3F51B5).withOpacity(0.1),
                   ],
                 ),
                 borderRadius: BorderRadius.circular(20),
@@ -438,14 +405,15 @@ class _MemoryScreenState extends State<MemoryScreen> {
               child: Icon(
                 Icons.explore,
                 size: 64,
-                color: AppTheme.primaryNavy.withOpacity(0.6),
+                color: const Color(0xFF1A237E).withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 24),
-            Text(
+            const Text(
               'Start Your Journey',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                color: AppTheme.primaryNavy,
+              style: TextStyle(
+                color: Color(0xFF1A237E),
+                fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -453,8 +421,9 @@ class _MemoryScreenState extends State<MemoryScreen> {
             Text(
               'Add your first travel destination\nand create beautiful memories',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.primaryNavy.withOpacity(0.7),
+              style: TextStyle(
+                color: const Color(0xFF1A237E).withOpacity(0.7),
+                fontSize: 14,
               ),
             ),
           ],
@@ -463,21 +432,21 @@ class _MemoryScreenState extends State<MemoryScreen> {
     );
   }
 
-  Widget _buildPremiumFAB() {
+  Widget _buildFAB() {
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppTheme.primaryNavy,
-            AppTheme.lightNavy,
+            Color(0xFF1A237E),
+            Color(0xFF3F51B5),
           ],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primaryNavy.withOpacity(0.3),
+            color: const Color(0xFF1A237E).withOpacity(0.3),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
