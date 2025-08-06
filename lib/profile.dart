@@ -1,13 +1,160 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'AuthScreen.dart'; // Import AuthScreen for sign-out navigation
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
+  @override
+  _ProfileScreenState createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Map<String, dynamic>? userData; // To store user data from Firestore
+  bool isLoading = true; // To show a loading indicator while fetching data
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserData();
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      User? user = _auth.currentUser;
+      if (user != null) {
+        DocumentSnapshot doc =
+        await _firestore.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          setState(() {
+            userData = doc.data() as Map<String, dynamic>;
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('User data not found.'),
+              duration: Duration(seconds: 2),
+              backgroundColor: Colors.redAccent,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No user is currently signed in.'),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.redAccent,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error fetching user data: ${e.toString()}'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.redAccent,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+    }
+  }
+
+  void _signOut() async {
+    await _auth.signOut();
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => AuthScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: child,
+          );
+        },
+        transitionDuration: Duration(milliseconds: 500),
+      ),
+    );
+  }
+
+  void _showAccountDetails() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          "My Account",
+          style: GoogleFonts.poppins(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Username: ${userData?['username'] ?? 'N/A'}",
+              style: GoogleFonts.poppins(fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Email: ${userData?['email'] ?? 'N/A'}",
+              style: GoogleFonts.poppins(fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Phone: ${userData?['phone'] ?? 'N/A'}",
+              style: GoogleFonts.poppins(fontSize: 16),
+            ),
+            SizedBox(height: 10),
+            Text(
+              "Joined: ${userData?['createdAt'] != null ? userData!['createdAt'].toDate().toString() : 'N/A'}",
+              style: GoogleFonts.poppins(fontSize: 16),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "Close",
+              style: GoogleFonts.poppins(
+                color: Color(0xFF264653),
+                fontSize: 16,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(
-        0xFF007E95,
-      ), // Match the dashboard's gradient background
+      backgroundColor: Color(0xFF007E95), // Match the dashboard's gradient background
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +194,9 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ),
                 padding: EdgeInsets.all(20),
-                child: Column(
+                child: isLoading
+                    ? Center(child: CircularProgressIndicator())
+                    : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // User Profile Section
@@ -67,7 +216,7 @@ class ProfileScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Jumma",
+                              userData?['username'] ?? 'User',
                               style: GoogleFonts.poppins(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -75,7 +224,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 5),
                             Text(
-                              "Genius Level 1",
+                              userData?['email'] ?? 'Email not available',
                               style: GoogleFonts.poppins(
                                 fontSize: 14,
                                 color: Colors.grey,
@@ -88,16 +237,101 @@ class ProfileScreen extends StatelessWidget {
                     SizedBox(height: 20),
 
                     // Profile Options
-                    buildProfileOption(Icons.account_circle, "My Account"),
-                    buildProfileOption(Icons.bookmark, "Bookings & Trips"),
+                    buildProfileOption(
+                      Icons.account_circle,
+                      "My Account",
+                      onTap: _showAccountDetails,
+                    ),
+                    buildProfileOption(
+                      Icons.bookmark,
+                      "Bookings & Trips",
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Bookings & Trips feature coming soon!'),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.blueAccent,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     buildProfileOption(
                       Icons.loyalty,
                       "Genius Loyalty Programme",
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Genius Loyalty Programme feature coming soon!'),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.blueAccent,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    buildProfileOption(Icons.wallet, "Rewards & Wallet"),
-                    buildProfileOption(Icons.reviews, "Reviews"),
-                    buildProfileOption(Icons.save, "Saved"),
-                    buildProfileOption(Icons.exit_to_app, "Sign Out"),
+                    buildProfileOption(
+                      Icons.wallet,
+                      "Rewards & Wallet",
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Rewards & Wallet feature coming soon!'),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.blueAccent,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    buildProfileOption(
+                      Icons.reviews,
+                      "Reviews",
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Reviews feature coming soon!'),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.blueAccent,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    buildProfileOption(
+                      Icons.save,
+                      "Saved",
+                      onTap: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Saved feature coming soon!'),
+                            duration: Duration(seconds: 2),
+                            backgroundColor: Colors.blueAccent,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    buildProfileOption(
+                      Icons.exit_to_app,
+                      "Sign Out",
+                      onTap: _signOut,
+                    ),
                   ],
                 ),
               ),
@@ -109,11 +343,9 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // Profile Option Widget
-  Widget buildProfileOption(IconData icon, String title) {
+  Widget buildProfileOption(IconData icon, String title, {VoidCallback? onTap}) {
     return GestureDetector(
-      onTap: () {
-        // Add functionality for each option
-      },
+      onTap: onTap,
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 10),
         padding: EdgeInsets.all(15),
