@@ -17,27 +17,27 @@ import 'firebase_options.dart';
 import 'screens/memory_screen.dart';
 /// Entry point for the Tourify application.
 /// 
-/// Starts the Flutter app with Navy Blue Glass Tempered design.
-/// Firebase initialization is temporarily disabled to fix white screen.
-void main() {
+/// Initializes Firebase services and starts the Flutter app with
+/// Navy Blue Glass Tempered design applied throughout.
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   print('Starting Tourify app...');
+  
+  try {
+    print('Initializing Firebase...');
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print('Firebase initialized successfully');
+  } catch (e) {
+    print('Firebase error: $e');
+    // Continue without Firebase for now
+  }
+  
+  print('Starting Flutter app...');
   runApp(const TourifyApp());
 }
-
-// Commented out Firebase initialization to fix white screen issue
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   
-//   try {
-//     await Firebase.initializeApp(
-//       options: DefaultFirebaseOptions.currentPlatform,
-//     );
-//   } catch (e) {
-//     print('Firebase error: $e');
-//   }
-//   
-//   runApp(const TourifyApp());
-// }
 
 /// Root widget for the Tourify application.
 /// 
