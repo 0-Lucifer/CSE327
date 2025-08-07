@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart'
 ///
 /// Example:
 /// ```dart
-/// import 'firebase_options.dart'; 
+/// import 'firebase_options.dart';
 /// // ...
 /// await Firebase.initializeApp(
 ///   options: DefaultFirebaseOptions.currentPlatform,
@@ -29,8 +29,8 @@ class DefaultFirebaseOptions {
           'DefaultFirebaseOptions have not been configured for macos - '
               'you can reconfigure this by running the FlutterFire CLI again.',
         );
-      // case TargetPlatform.windows:
-      //   return windows;
+      case TargetPlatform.windows:
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -44,7 +44,7 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyCOFDMJkZVP2pbk8D_ViJqlZJFezzq5S8',
+    apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
     appId: '1:992729470612:web:4cc139628ef7d057d0c681',
     messagingSenderId: '992729470612',
     projectId: 'tourify-222',
@@ -54,7 +54,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCOFDMJkZVP2pbk8D_ViJqlZJFezzq5S8',
+    apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
     appId: '1:992729470612:android:0be7dfc054bf786ad0c681',
     messagingSenderId: '992729470612',
     projectId: 'tourify-222',
@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCOFDMJkZVP2pbk8D_ViJqlZJFezzq5S8',
+    apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
     appId: '1:992729470612:ios:fb98a2df64ab925cd0c681',
     messagingSenderId: '992729470612',
     projectId: 'tourify-222',
@@ -72,13 +72,13 @@ class DefaultFirebaseOptions {
     measurementId: 'G-JLN1GZCF71',
   );
 
-  // static const FirebaseOptions windows = FirebaseOptions(
-  //   apiKey: 'AIzaSyCOFDMJkZVP2pbk8D_ViJqlZJFezzq5S8',
-  //   appId: 'blank rekhe dilam',
-  //   messagingSenderId: '992729470612',
-  //   projectId: 'tourify-222',
-  //   authDomain: 'tourify-222.firebaseapp.com',
-  //   storageBucket: 'tourify-222.firebasestorage.app',
-  //   measurementId: 'G-JLN1GZCF71',
-  // );
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
+    appId: '1:992729470612:windows:someuniqueid', // Replace with actual Windows appId
+    messagingSenderId: '992729470612',
+    projectId: 'tourify-222',
+    authDomain: 'tourify-222.firebaseapp.com',
+    storageBucket: 'tourify-222.firebasestorage.app',
+    measurementId: 'G-JLN1GZCF71',
+  );
 }
