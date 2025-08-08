@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tourify/AuthScreen.dart'; // Import the new AuthScreen
+import 'AuthScreen.dart'; // Import the new AuthScreen
 import 'firebase_options.dart';
 
 void main() async {
