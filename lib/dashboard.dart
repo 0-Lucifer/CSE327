@@ -8,7 +8,7 @@ import 'flight.dart';
 import 'experiences.dart';
 import 'TrainHomePage.dart';
 import 'AuthScreen.dart';
-import 'car_rental_page.dart'; // ✅ Import CarRentalPage
+import 'car_rental_page.dart';
 =======
 import 'profile.dart'; // Importing the ProfileScreen
 import 'flight.dart'; // Importing the FlightScreen
