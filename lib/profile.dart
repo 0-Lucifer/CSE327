@@ -5,30 +5,49 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'AuthScreen.dart'; // Import AuthScreen for sign-out navigation
 // Add imports for the new booking screens
 import 'flightBooked.dart';
-// import 'busBooked.dart';
-// import 'trainBooked.dart';
-// import 'hotelBooked.dart';
 import 'flight.dart';
 
+/// Displays a user profile screen with account details and booking options.
+///
+/// This widget fetches user data from Firestore and provides options to view
+/// account details, bookings, and other features (e.g., loyalty program, reviews).
+/// It includes a sign-out feature and a styled UI with a gradient background.
 class ProfileScreen extends StatefulWidget {
+  /// Creates the profile screen widget.
   const ProfileScreen({super.key});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
 
+/// Manages the state and logic for the [ProfileScreen] widget.
+///
+/// Handles fetching user data from Firestore, managing loading states, and
+/// providing navigation to booking screens and sign-out functionality.
 class _ProfileScreenState extends State<ProfileScreen> {
+  /// Firebase Authentication instance for accessing the current user.
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  /// Firestore instance for querying user data.
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  Map<String, dynamic>? userData; // To store user data from Firestore
-  bool isLoading = true; // To show a loading indicator while fetching data
+
+  /// Stores user data retrieved from Firestore.
+  Map<String, dynamic>? userData;
+
+  /// Indicates whether the UI is in a loading state.
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    // Fetch user data when the screen initializes
     _fetchUserData();
   }
 
+  /// Fetches user data from Firestore.
+  ///
+  /// Retrieves the current user's data from the 'users' collection and updates
+  /// the [userData] state. Displays a SnackBar for errors or missing data.
   Future<void> _fetchUserData() async {
     try {
       User? user = _auth.currentUser;
@@ -44,6 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           setState(() {
             isLoading = false;
           });
+          // Show SnackBar if user data is not found
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('User data not found.'),
@@ -60,6 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         setState(() {
           isLoading = false;
         });
+        // Show SnackBar if no user is signed in
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('No user is currently signed in.'),
@@ -76,6 +97,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() {
         isLoading = false;
       });
+      // Show SnackBar for errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error fetching user data: ${e.toString()}'),
@@ -90,6 +112,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  /// Signs out the current user and navigates to the [AuthScreen].
+  ///
+  /// Uses a fade transition for smooth navigation.
   void _signOut() async {
     await _auth.signOut();
     Navigator.pushReplacement(
@@ -107,6 +132,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  /// Shows a dialog with the user's account details.
+  ///
+  /// Displays username, email, phone, and account creation date in a styled dialog.
   void _showAccountDetails() {
     showGeneralDialog(
       context: context,
@@ -367,24 +395,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     MaterialPageRoute(builder: (context) => FlightBookedScreen()),
                   );
                 }, Icons.flight),
-                // _buildBookingOption("Bus Booked", () {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => BusBookedScreen()),
-                //   );
-                // }, Icons.directions_bus),
-                // _buildBookingOption("Train Booked", () {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => TrainBookedScreen()),
-                //   );
-                // }, Icons.train),
-                // _buildBookingOption("Hotel Booked", () {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) => HotelBookedScreen()),
-                //   );
-                // }, Icons.hotel),
                 const SizedBox(height: 20),
                 // Close Button
                 ElevatedButton(

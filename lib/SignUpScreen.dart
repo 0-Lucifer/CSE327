@@ -8,34 +8,74 @@ import 'package:image_picker/image_picker.dart';
 import 'dashboard.dart'; // Import DashboardScreen
 import 'AuthScreen.dart'; // Import AuthScreen for navigation
 
+/// Displays a sign-up screen with optional login toggle and profile photo upload.
+///
+/// This widget handles user registration using Firebase Authentication, stores
+/// additional user data in Firestore, and uploads profile photos to Firebase Storage.
+/// It includes animations for the background and navigation to the dashboard upon success.
 class SignUpScreen extends StatefulWidget {
+  /// Creates the sign-up screen widget.
   const SignUpScreen({super.key});
 
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 
+/// Manages the state and logic for the [SignUpScreen] widget.
+///
+/// Handles form input, image picking, animations, sign-up/sign-in logic, and navigation.
+/// Uses [SingleTickerProviderStateMixin] for animation control.
 class _SignUpScreenState extends State<SignUpScreen>
     with SingleTickerProviderStateMixin {
+  /// Flag to toggle between sign-up and login modes (starts in sign-up mode).
   bool isLogin = false; // Start in sign-up mode by default
+
+  /// Controller for the username input field.
   final TextEditingController _usernameController = TextEditingController();
+
+  /// Controller for the email input field.
   final TextEditingController _emailController = TextEditingController();
+
+  /// Controller for the password input field.
   final TextEditingController _passwordController = TextEditingController();
+
+  /// Controller for the phone number input field.
   final TextEditingController _phoneController = TextEditingController();
 
+  /// Selected profile image file (optional).
   File? _profileImage; // To store the selected image file
+
+  /// Image picker instance for selecting profile photos.
   final ImagePicker _picker = ImagePicker(); // Image picker instance
 
+  /// Animation controller for background animations.
   late AnimationController _controller;
+
+  /// Animation for the plane icon movement.
   late Animation<double> _planeAnimation;
+
+  /// Animation for the first cloud's movement.
   late Animation<double> _cloudAnimation1;
+
+  /// Animation for the second cloud's movement.
   late Animation<double> _cloudAnimation2;
+
+  /// Animation for the third cloud's movement.
   late Animation<double> _cloudAnimation3;
+
+  /// Animation for the umbrella icon rotation.
   late Animation<double> _umbrellaAnimation;
+
+  /// Animation for the pyramid icon (static).
   late Animation<double> _pyramidAnimation;
 
+  /// Firebase Authentication instance for sign-up and sign-in.
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  /// Firestore instance for storing user data.
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  /// Firebase Storage instance for uploading profile photos.
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   @override
@@ -73,6 +113,7 @@ class _SignUpScreenState extends State<SignUpScreen>
 
   @override
   void dispose() {
+    // Dispose of animation controller and text controllers
     _controller.dispose();
     _usernameController.dispose();
     _emailController.dispose();
@@ -81,7 +122,9 @@ class _SignUpScreenState extends State<SignUpScreen>
     super.dispose();
   }
 
-  // Function to pick an image from the gallery
+  /// Picks an image from the gallery for the profile photo.
+  ///
+  /// Updates [_profileImage] with the selected file or shows an error SnackBar on failure.
   Future<void> _pickImage() async {
     try {
       final XFile? pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -91,6 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         });
       }
     } catch (e) {
+      // Show error SnackBar if image picking fails
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error picking image: ${e.toString()}'),
@@ -105,6 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     }
   }
 
+  /// Navigates to the DashboardScreen with a fade transition.
   void navigateToDashboard() {
     Navigator.pushReplacement(
       context,
@@ -121,6 +166,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+  /// Navigates to the AuthScreen with a fade transition.
   void navigateToLogin() {
     Navigator.pushReplacement(
       context,
@@ -137,6 +183,11 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+  /// Handles user sign-up with validation, Firebase Authentication, Storage, and Firestore.
+  ///
+  /// Validates input fields, checks username uniqueness, uploads profile photo (if selected),
+  /// creates the user account, and stores data in Firestore. Navigates to dashboard on success
+  /// or shows error SnackBar on failure.
   Future<void> _signUp() async {
     try {
       // Input validation
@@ -253,8 +304,10 @@ class _SignUpScreenState extends State<SignUpScreen>
         'createdAt': FieldValue.serverTimestamp(),
       });
 
+      // Navigate to dashboard on success
       navigateToDashboard();
     } catch (e) {
+      // Show error SnackBar on failure
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Sign-up failed: ${e.toString()}'),
@@ -269,6 +322,10 @@ class _SignUpScreenState extends State<SignUpScreen>
     }
   }
 
+  /// Handles user sign-in with validation and Firebase Authentication.
+  ///
+  /// Validates email and password, signs in the user, and navigates to the dashboard
+  /// on success or shows error SnackBar on failure.
   Future<void> _signIn() async {
     try {
       // Input validation
@@ -306,12 +363,14 @@ class _SignUpScreenState extends State<SignUpScreen>
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      // Navigate to dashboard on success
       navigateToDashboard();
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'Sign-in failed: ${e.message}';
       if (e.code == 'user-not-found' || e.code == 'wrong-password') {
         errorMessage = 'Email or password is incorrect';
       }
+      // Show error SnackBar for Firebase exceptions
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -324,6 +383,7 @@ class _SignUpScreenState extends State<SignUpScreen>
         ),
       );
     } catch (e) {
+      // Show general error SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Sign-in failed: ${e.toString()}'),
@@ -376,6 +436,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+  /// Builds the animated background decorations with icons like plane, clouds, umbrella, and pyramid.
   Widget _buildBackgroundDecorations() {
     return Stack(
       children: [
@@ -470,6 +531,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+  /// Builds the authentication card with form and toggle link.
   Widget _buildAuthCard() {
     return Container(
       width: 350,
@@ -537,6 +599,7 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+  /// Builds the authentication form with conditional fields based on mode.
   Widget _buildAuthForm() {
     return Column(
       children: [
@@ -580,6 +643,11 @@ class _SignUpScreenState extends State<SignUpScreen>
     );
   }
 
+  /// Builds a styled input field for the form.
+  ///
+  /// [icon] The prefix icon for the field.
+  /// [hint] The hint text for the field.
+  /// [isPassword] Whether the field should obscure text (for passwords).
   Widget _buildInputField(
       IconData icon,
       String hint, {

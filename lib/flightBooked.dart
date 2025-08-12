@@ -4,25 +4,49 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart'; // For formatting timestamp
 
+/// Displays a screen showing the user's booked flights.
+///
+/// This widget fetches and displays the list of flights booked by the currently
+/// authenticated user from Firestore. It includes a gradient background and
+/// styled cards for each booking, with details such as departure date, time,
+/// passenger count, payment method, and total price.
 class FlightBookedScreen extends StatefulWidget {
+  /// Creates the flight booked screen widget.
   const FlightBookedScreen({super.key});
 
   @override
   _FlightBookedScreenState createState() => _FlightBookedScreenState();
 }
 
+/// Manages the state and logic for the [FlightBookedScreen] widget.
+///
+/// Handles fetching booked flights from Firestore, managing loading states,
+/// and displaying user feedback via SnackBars for errors or empty results.
 class _FlightBookedScreenState extends State<FlightBookedScreen> {
+  /// Firebase Authentication instance for accessing the current user.
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  /// Firestore instance for querying booked flights.
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  /// Indicates whether the UI is in a loading state.
   bool _isLoading = true;
+
+  /// List of booked flights retrieved from Firestore.
   List<Map<String, dynamic>> _bookedFlights = [];
 
   @override
   void initState() {
     super.initState();
+    // Fetch booked flights when the screen initializes
     _fetchBookedFlights();
   }
 
+  /// Fetches the user's booked flights from Firestore.
+  ///
+  /// Queries the 'flightbookings' collection for bookings associated with the
+  /// current user's ID. Updates the [_bookedFlights] list and handles errors
+  /// or empty results with SnackBar notifications.
   Future<void> _fetchBookedFlights() async {
     try {
       User? user = _auth.currentUser;
@@ -30,6 +54,7 @@ class _FlightBookedScreenState extends State<FlightBookedScreen> {
         setState(() {
           _isLoading = false;
         });
+        // Show SnackBar if user is not logged in
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('Please log in to view your booked flights.'),
@@ -64,6 +89,7 @@ class _FlightBookedScreenState extends State<FlightBookedScreen> {
       });
 
       if (bookedFlights.isEmpty) {
+        // Show SnackBar if no bookings are found
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: const Text('No flight bookings found.'),
@@ -80,7 +106,9 @@ class _FlightBookedScreenState extends State<FlightBookedScreen> {
       setState(() {
         _isLoading = false;
       });
+      // Log error for debugging
       print('Error fetching booked flights: $e');
+      // Show error SnackBar
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error fetching booked flights: $e'),
@@ -136,6 +164,7 @@ class _FlightBookedScreenState extends State<FlightBookedScreen> {
                     IconButton(
                       icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
                       onPressed: () {
+                        // Navigate back to previous screen
                         Navigator.of(context).pop();
                       },
                     ),
@@ -312,6 +341,12 @@ class _FlightBookedScreenState extends State<FlightBookedScreen> {
     );
   }
 
+  /// Builds a row for displaying booking information.
+  ///
+  /// [icon] The icon to display.
+  /// [label] The label for the information.
+  /// [value] The value of the information.
+  /// [highlight] Whether to highlight the value (e.g., for total price).
   Widget _buildInfoRow({
     required IconData icon,
     required String label,

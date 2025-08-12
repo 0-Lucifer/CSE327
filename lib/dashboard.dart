@@ -2,19 +2,223 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'HotelHomePage.dart';
 import 'listofhotels.dart';
-import 'profile.dart'; // Importing the ProfileScreen
-import 'tourpackages.dart'; // Importing the TourPackagesScreen
-import 'TravelGuides.dart'; // Importing the TravelGuidesScreen
-import 'Rewards&Discounts.dart'; // Importing the RewardsDiscountsScreen
-import 'customersupport.dart'; // Importing the CustomerSupportScreen
+import 'profile.dart'; // Importing the ProfileScreen for user profile navigation
+import 'tourpackages.dart'; // Importing the TourPackagesScreen for tour package navigation
+import 'TravelGuides.dart'; // Importing the TravelGuidesScreen for travel guides navigation
+import 'Rewards&Discounts.dart'; // Importing the RewardsDiscountsScreen for rewards navigation
+import 'customersupport.dart'; // Importing the CustomerSupportScreen for support navigation
 import 'experiences.dart';
-import 'flight.dart'; // Importing the FlightScreen
+import 'flight.dart'; // Importing the FlightScreen for flight search navigation
 import 'TrainHomePage.dart';
 import 'AuthScreen.dart';
 
+// M (Model) - Data and business logic
+// This section contains the data structures, state management, and business logic.
+// - Hotel data structure for popular destinations.
+// - Static data for hotels imported from listofhotels.dart.
+class DashboardModel {
+  /// Static map of hotel data for various destinations, sourced from listofhotels.dart.
+  static final Map<String, List<Map<String, dynamic>>> hotels = HotelList.hotels;
+}
+
+// C (Controller) - Interaction logic between Model and View
+// This section handles the interaction logic, including navigation and event handling.
+// - Navigation methods for various screens.
+// - Logic for showing hotel details in a modal bottom sheet.
+class DashboardController {
+  /// Build context for navigation and UI interactions.
+  final BuildContext context;
+
+  /// Creates a DashboardController with the given context.
+  ///
+  /// [context] The build context for navigation and UI interactions.
+  DashboardController(this.context);
+
+  /// Navigates to the ProfileScreen.
+  void navigateToProfile() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfileScreen()),
+    );
+  }
+
+  /// Navigates to the AuthScreen, replacing the current screen.
+  void navigateToAuth() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => AuthScreen()),
+    );
+  }
+
+  /// Navigates to the FlightScreen for flight search.
+  void navigateToFlight() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => FlightScreen()),
+    );
+  }
+
+  /// Navigates to the HotelHomePage for hotel search.
+  void navigateToHotel() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HotelHomePage()),
+    );
+  }
+
+  /// Navigates to the TourPackagesScreen for tour package exploration.
+  void navigateToTourPackages() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TourPackagesScreen()),
+    );
+  }
+
+  /// Navigates to the ExperienceScreen for experience exploration.
+  void navigateToExperience() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ExperienceScreen()),
+    );
+  }
+
+  /// Navigates to the TrainHomePage for train search.
+  void navigateToTrain() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TrainHomePage()),
+    );
+  }
+
+  /// Navigates to the TravelGuidesScreen for travel guides.
+  void navigateToTravelGuides() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => TravelGuidesScreen()),
+    );
+  }
+
+  /// Navigates to the CustomerSupportScreen for customer support.
+  void navigateToCustomerSupport() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => CustomerSupportScreen()),
+    );
+  }
+
+  /// Navigates to the RewardsDiscountsScreen for rewards and discounts.
+  void navigateToRewardsDiscounts() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RewardsDiscountsScreen()),
+    );
+  }
+
+  /// Displays a modal bottom sheet with hotel details for the specified destination.
+  ///
+  /// [destination] The destination for which to show hotel details.
+  void showHotelDetails(String destination) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext context) {
+        return Container(
+          padding: EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header with destination name and back button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Hotels in $destination",
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.arrow_back, color: Color(0xFF264653)),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the bottom sheet
+                    },
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              // List of hotels for the destination
+              Expanded(
+                child: ListView.builder(
+                  itemCount: DashboardModel.hotels[destination]?.length ?? 0,
+                  itemBuilder: (context, index) {
+                    final hotel = DashboardModel.hotels[destination]![index];
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Hotel name
+                            Text(
+                              hotel["name"] as String,
+                              style: GoogleFonts.poppins(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            // Hotel rating and reviews
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star,
+                                  color: Colors.amber,
+                                  size: 16,
+                                ),
+                                SizedBox(width: 5),
+                                Text(
+                                  "${hotel["rating"]} (${hotel["reviews"]} reviews)",
+                                  style: GoogleFonts.poppins(fontSize: 14),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 5),
+                            // Hotel price and discount
+                            Text(
+                              "Price: ${hotel["price"]} | ${hotel["discount"]}",
+                              style: GoogleFonts.poppins(
+                                fontSize: 14,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// V (View) - UI representation
+// This section defines the UI components and layout.
+// - Scaffold with gradient background for visual appeal.
+// - Navigation bar, search bar, icon menus, feature cards, and destination cards.
+// - Layout for the dashboard interface.
 class DashboardScreen extends StatelessWidget {
+  /// Creates the dashboard screen widget.
   @override
   Widget build(BuildContext context) {
+    // Initialize controller in build
+    DashboardController controller = DashboardController(context);
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -22,7 +226,7 @@ class DashboardScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF007E95), // Keep your background color
+              Color(0xFF007E95),
               Color(0xFF004D65),
               Color(0xFF003653),
             ],
@@ -38,16 +242,9 @@ class DashboardScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    // Profile navigation button
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the ProfileScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ProfileScreen(),
-                          ),
-                        );
-                      },
+                      onTap: controller.navigateToProfile,
                       child: CircleAvatar(
                         radius: 22,
                         backgroundColor: Colors.white,
@@ -62,6 +259,7 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Dashboard title
                     Text(
                       'Tourify Dashboard',
                       style: GoogleFonts.poppins(
@@ -70,13 +268,9 @@ class DashboardScreen extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                    // Logout button
                     GestureDetector(
-                      onTap: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => AuthScreen()),
-                        );
-                      },
+                      onTap: controller.navigateToAuth,
                       child: Icon(Icons.logout, color: Colors.white, size: 28),
                     ),
                   ],
@@ -118,39 +312,21 @@ class DashboardScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    //one
+                    // Flights navigation
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the flightScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => FlightScreen()),
-                        );
-                      },
+                      onTap: controller.navigateToFlight,
                       child: buildIconCard(Icons.flight, "Flights"),
                     ),
-                    //two
+                    // Hotels navigation
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the HotelHomePage
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HotelHomePage()),
-                        );
-                      },
+                      onTap: controller.navigateToHotel,
                       child: buildIconCard(Icons.hotel, "Hotels"),
                     ),
-
+                    // Car Rentals (not implemented)
                     buildIconCard(Icons.directions_car, "Car Rentals"),
-
+                    // Tour Packages navigation
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the TourPackagesScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => TourPackagesScreen()),
-                        );
-                      },
+                      onTap: controller.navigateToTourPackages,
                       child: buildIconCard(Icons.tour, "Tour Packages"),
                     ),
                   ],
@@ -166,37 +342,21 @@ class DashboardScreen extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    //one
+                    // Experiences navigation
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the ExperienceScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => ExperienceScreen()),
-                        );
-                      },
+                      onTap: controller.navigateToExperience,
                       child: buildIconCard(Icons.explore, "Experiences"),
                     ),
-                    //two
+                    // Train navigation
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the TrainHomePage
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => TrainHomePage()),
-                        );
-                      },
+                      onTap: controller.navigateToTrain,
                       child: buildIconCard(Icons.train, "Train"),
                     ),
+                    // Transfers (not implemented)
                     buildIconCard(Icons.airport_shuttle, "Transfers"),
+                    // Travel Guides navigation
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the TravelGuidesScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => TravelGuidesScreen()),
-                        );
-                      },
+                      onTap: controller.navigateToTravelGuides,
                       child: buildIconCard(Icons.map, "Travel Guides"),
                     ),
                   ],
@@ -211,14 +371,9 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
+                    // Customer Support navigation
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the CustomerSupportScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => CustomerSupportScreen()),
-                        );
-                      },
+                      onTap: controller.navigateToCustomerSupport,
                       child: buildFeatureCard(
                         icon: Icons.support_agent,
                         title: "Customer Support in Seconds",
@@ -226,21 +381,16 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 20),
+                    // Travel Worry-free card
                     buildFeatureCard(
                       icon: Icons.verified_user,
                       title: "Travel Worry-free",
-                      description:
-                      "Enjoy a seamless travel experience.",
+                      description: "Enjoy a seamless travel experience.",
                     ),
                     SizedBox(height: 20),
+                    // Rewards & Discounts navigation
                     GestureDetector(
-                      onTap: () {
-                        // Navigate to the RewardsDiscountsScreen
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => RewardsDiscountsScreen()),
-                        );
-                      },
+                      onTap: controller.navigateToRewardsDiscounts,
                       child: buildFeatureCard(
                         icon: Icons.discount,
                         title: "Exclusive Rewards & Discounts",
@@ -260,6 +410,7 @@ class DashboardScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Section title
                     Text(
                       "Where to next?",
                       style: GoogleFonts.poppins(
@@ -269,15 +420,16 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 10),
+                    // Horizontal scrollable destination cards
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: [
-                          buildDestinationCard("Cox's Bazar", context),
-                          buildDestinationCard("Teknaf", context),
-                          buildDestinationCard("Bandarban", context),
-                          buildDestinationCard("Sreemangal", context),
-                          buildDestinationCard("Sajek", context),
+                          buildDestinationCard("Cox's Bazar", controller),
+                          buildDestinationCard("Teknaf", controller),
+                          buildDestinationCard("Bandarban", controller),
+                          buildDestinationCard("Sreemangal", controller),
+                          buildDestinationCard("Sajek", controller),
                         ],
                       ),
                     ),
@@ -291,7 +443,10 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Icon Card for Navigation Bar
+  /// Builds an icon card for the navigation menu.
+  ///
+  /// [icon] The icon to display in the card.
+  /// [title] The title text below the icon.
   Widget buildIconCard(IconData icon, String title) {
     return Column(
       children: [
@@ -313,7 +468,11 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Feature Card for Additional Features
+  /// Builds a feature card for additional features section.
+  ///
+  /// [icon] The icon to display in the card.
+  /// [title] The title of the feature.
+  /// [description] The description text for the feature.
   Widget buildFeatureCard({
     required IconData icon,
     required String title,
@@ -352,95 +511,13 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Destination Card for Popular Destinations
-  Widget buildDestinationCard(String destination, BuildContext context) {
+  /// Builds a destination card for the popular destinations section.
+  ///
+  /// [destination] The name of the destination.
+  /// [controller] The DashboardController to handle interactions.
+  Widget buildDestinationCard(String destination, DashboardController controller) {
     return GestureDetector(
-      onTap: () {
-
-        // Navigation logic for destinations
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          builder: (BuildContext context) {
-            return Container(
-              padding: EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Hotels in $destination",
-                        style: GoogleFonts.poppins(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.arrow_back, color: Color(0xFF264653)),
-                        onPressed: () {
-                          Navigator.of(context).pop(); // Close the bottom sheet
-                        },
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: hotels[destination]?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        final hotel = hotels[destination]![index];
-                        return Card(
-                          margin: EdgeInsets.symmetric(vertical: 5),
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  hotel["name"],
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
-                                      size: 16,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      "${hotel["rating"]} (${hotel["reviews"]} reviews)",
-                                      style: GoogleFonts.poppins(fontSize: 14),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  "Price: ${hotel["price"]} | ${hotel["discount"]}",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    color: Colors.green,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+      onTap: () => controller.showHotelDetails(destination),
       child: Padding(
         padding: const EdgeInsets.only(right: 10),
         child: Chip(

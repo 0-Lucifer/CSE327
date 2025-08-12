@@ -4,7 +4,11 @@ import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
-/// Default [FirebaseOptions] for use with your Firebase apps.
+/// Provides default [FirebaseOptions] for initializing Firebase in the app.
+///
+/// This class contains platform-specific Firebase configuration options for
+/// web, Android, iOS, and Windows platforms. It is typically used to initialize
+/// Firebase with the appropriate configuration for the current platform.
 ///
 /// Example:
 /// ```dart
@@ -15,10 +19,17 @@ import 'package:flutter/foundation.dart'
 /// );
 /// ```
 class DefaultFirebaseOptions {
+  /// Returns the [FirebaseOptions] for the current platform.
+  ///
+  /// Determines the platform at runtime and returns the corresponding Firebase
+  /// configuration. Throws an [UnsupportedError] for unsupported platforms
+  /// (macOS, Linux).
   static FirebaseOptions get currentPlatform {
+    // Check if running on web
     if (kIsWeb) {
       return web;
     }
+    // Switch based on the target platform
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
@@ -43,6 +54,7 @@ class DefaultFirebaseOptions {
     }
   }
 
+  /// Firebase configuration options for the web platform.
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
     appId: '1:992729470612:web:4cc139628ef7d057d0c681',
@@ -53,6 +65,7 @@ class DefaultFirebaseOptions {
     measurementId: 'G-JLN1GZCF71',
   );
 
+  /// Firebase configuration options for the Android platform.
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
     appId: '1:992729470612:android:0be7dfc054bf786ad0c681',
@@ -62,6 +75,7 @@ class DefaultFirebaseOptions {
     measurementId: 'G-JLN1GZCF71',
   );
 
+  /// Firebase configuration options for the iOS platform.
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
     appId: '1:992729470612:ios:fb98a2df64ab925cd0c681',
@@ -72,6 +86,7 @@ class DefaultFirebaseOptions {
     measurementId: 'G-JLN1GZCF71',
   );
 
+  /// Firebase configuration options for the Windows platform.
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
     appId: '1:992729470612:windows:someuniqueid', // Replace with actual Windows appId

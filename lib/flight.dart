@@ -5,24 +5,52 @@ import 'package:intl/intl.dart';
 import 'flightbook.dart';
 import 'dart:async';
 
+/// Displays a screen for searching and booking flights.
+///
+/// This widget provides a user interface for entering flight search criteria
+/// (departure city, destination city, and departure date) and displays
+/// available flights fetched from Firestore in real-time. It includes an
+/// animated gradient background and navigates to a booking screen when a
+/// flight is selected.
 class FlightScreen extends StatefulWidget {
+  /// Creates the flight screen widget.
   const FlightScreen({super.key});
 
   @override
   _FlightScreenState createState() => _FlightScreenState();
 }
 
+/// Manages the state and logic for the [FlightScreen] widget.
+///
+/// Handles user input, Firestore data fetching, animations, and navigation.
+/// Uses [SingleTickerProviderStateMixin] for animation control.
 class _FlightScreenState extends State<FlightScreen>
     with SingleTickerProviderStateMixin {
+  /// Controller for the departure city input field.
   final TextEditingController _fromController = TextEditingController();
+
+  /// Controller for the destination city input field.
   final TextEditingController _toController = TextEditingController();
+
+  /// Controller for the departure date input field.
   final TextEditingController _departureDateController = TextEditingController();
+
+  /// Selected departure date for filtering flights.
   DateTime? _departureDate;
+
+  /// Indicates whether the UI is in a loading state.
   bool _isLoading = false;
+
+  /// Timer for debouncing search input to prevent excessive queries.
   Timer? _debounce;
 
+  /// Animation controller for the gradient background.
   late AnimationController _animationController;
+
+  /// First color animation for the gradient background.
   late Animation<Color?> _colorAnimation1;
+
+  /// Second color animation for the gradient background.
   late Animation<Color?> _colorAnimation2;
 
   @override
@@ -34,6 +62,7 @@ class _FlightScreenState extends State<FlightScreen>
       vsync: this,
     )..repeat(reverse: true);
 
+    // Define first color transition for gradient
     _colorAnimation1 = ColorTween(
       begin: const Color(0xFF007E95),
       end: const Color(0xFF264653),
@@ -42,6 +71,7 @@ class _FlightScreenState extends State<FlightScreen>
       curve: Curves.easeInOut,
     ));
 
+    // Define second color transition for gradient
     _colorAnimation2 = ColorTween(
       begin: const Color(0xFF264653),
       end: const Color(0xFF007E95),
@@ -53,6 +83,7 @@ class _FlightScreenState extends State<FlightScreen>
 
   @override
   void dispose() {
+    // Dispose of controllers and resources
     _fromController.dispose();
     _toController.dispose();
     _departureDateController.dispose();
@@ -61,7 +92,12 @@ class _FlightScreenState extends State<FlightScreen>
     super.dispose();
   }
 
-  // Pick a date for departure
+  /// Opens a date picker to select a departure date.
+  ///
+  /// Updates the [_departureDate] and [_departureDateController] with the
+  /// selected date and triggers a UI refresh with a loading state.
+  ///
+  /// [context] The build context for displaying the date picker.
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -69,6 +105,7 @@ class _FlightScreenState extends State<FlightScreen>
       firstDate: DateTime(2023),
       lastDate: DateTime(2026),
       builder: (context, child) {
+        // Customize date picker theme
         return Theme(
           data: ThemeData.light().copyWith(
             colorScheme: const ColorScheme.light(
@@ -100,7 +137,11 @@ class _FlightScreenState extends State<FlightScreen>
     }
   }
 
-  // Debounce search input
+  /// Debounces search input to prevent excessive Firestore queries.
+  ///
+  /// Sets a loading state and delays the UI refresh to optimize performance.
+  ///
+  /// [value] The input text that triggered the search.
   void _onSearchChanged(String value) {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () {
@@ -117,7 +158,10 @@ class _FlightScreenState extends State<FlightScreen>
     });
   }
 
-  // Fetch flights from Firestore with search filters
+  /// Fetches flights from Firestore based on search criteria.
+  ///
+  /// Queries the 'flights' collection with filters for departure city,
+  /// destination city, and departure date, returning a stream of flight data.
   Stream<List<Map<String, dynamic>>> _fetchFlights() {
     Query<Map<String, dynamic>> query =
     FirebaseFirestore.instance.collection('flights');
@@ -176,6 +220,7 @@ class _FlightScreenState extends State<FlightScreen>
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
           onPressed: () {
+            // Navigate back to previous screen
             Navigator.of(context).pop();
           },
         ),
@@ -349,7 +394,15 @@ class _FlightScreenState extends State<FlightScreen>
     );
   }
 
-  // Custom TextField Widget with Fancy Styling
+  /// Builds a styled text field for user input.
+  ///
+  /// [controller] The text editing controller for the field.
+  /// [label] The label text for the field.
+  /// [hint] The hint text for the field.
+  /// [icon] The icon to display in the field.
+  /// [readOnly] Whether the field is read-only.
+  /// [onChanged] Callback for when the text changes.
+  /// [onTap] Callback for when the field is tapped.
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -421,7 +474,16 @@ class _FlightScreenState extends State<FlightScreen>
     );
   }
 
-  // Fancy Flight Card Widget with Animation
+  /// Builds a flight card with animated opacity and detailed flight information.
+  ///
+  /// [context] The build context for navigation.
+  /// [from] The departure city.
+  /// [to] The destination city.
+  /// [departure] The departure time.
+  /// [price] The flight price.
+  /// [stopType] The type of stop (e.g., non-stop, one-stop).
+  /// [flightId] The unique identifier for the flight.
+  /// [index] The index of the flight in the list for animation delay.
   Widget buildFlightCard(
       BuildContext context,
       String from,
@@ -563,6 +625,7 @@ class _FlightScreenState extends State<FlightScreen>
                 Center(
                   child: ElevatedButton(
                     onPressed: () {
+                      // Navigate to booking screen with flight details
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -604,7 +667,11 @@ class _FlightScreenState extends State<FlightScreen>
     );
   }
 
-  // Helper method to build flight info rows
+  /// Builds a row for displaying flight information (e.g., departure time, stop type).
+  ///
+  /// [icon] The icon to display.
+  /// [label] The label for the information.
+  /// [value] The value of the information.
   Widget _buildFlightInfoRow({
     required IconData icon,
     required String label,

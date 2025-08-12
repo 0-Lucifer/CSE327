@@ -3,25 +3,54 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// Displays a screen for booking a selected flight.
+///
+/// This widget allows users to specify the number of passengers, select a travel class,
+/// choose a payment method, and confirm the booking. The booking details are saved to
+/// Firestore, and the UI includes an animated gradient background and styled dialogs
+/// for user feedback.
 class FlightBookScreen extends StatefulWidget {
+  /// Flight details including from, to, departure, price, and flight ID.
   final Map<String, String> flightDetails;
+
+  /// Creates the flight booking screen widget.
+  ///
+  /// [flightDetails] A map containing the flight details.
   const FlightBookScreen({super.key, required this.flightDetails});
 
   @override
   _FlightBookScreenState createState() => _FlightBookScreenState();
 }
 
+/// Manages the state and logic for the [FlightBookScreen] widget.
+///
+/// Handles user input for passenger count, travel class, and payment method,
+/// calculates the total price, and saves the booking to Firestore. Uses
+/// [SingleTickerProviderStateMixin] for animation control.
 class _FlightBookScreenState extends State<FlightBookScreen>
     with SingleTickerProviderStateMixin {
+  /// Number of passengers for the booking.
   int _passengerCount = 1;
+
+  /// Selected travel class (e.g., Economy, Business).
   String _selectedClass = 'Economy';
+
+  /// Selected payment method (e.g., Credit Card, PayPal, Debit Card).
   String _selectedPaymentMethod = 'Credit Card';
+
+  /// Indicates whether the UI is in a loading state.
   bool _isLoading = false;
 
+  /// List of available payment methods.
   final List<String> _paymentMethods = ['Credit Card', 'PayPal', 'Debit Card'];
 
+  /// Animation controller for the gradient background.
   late AnimationController _animationController;
+
+  /// First color animation for the gradient background.
   late Animation<Color?> _colorAnimation1;
+
+  /// Second color animation for the gradient background.
   late Animation<Color?> _colorAnimation2;
 
   @override
@@ -33,6 +62,7 @@ class _FlightBookScreenState extends State<FlightBookScreen>
       vsync: this,
     )..repeat(reverse: true);
 
+    // Define first color transition for gradient
     _colorAnimation1 = ColorTween(
       begin: const Color(0xFF007E95),
       end: const Color(0xFF264653),
@@ -41,6 +71,7 @@ class _FlightBookScreenState extends State<FlightBookScreen>
       curve: Curves.easeInOut,
     ));
 
+    // Define second color transition for gradient
     _colorAnimation2 = ColorTween(
       begin: const Color(0xFF264653),
       end: const Color(0xFF007E95),
@@ -52,11 +83,15 @@ class _FlightBookScreenState extends State<FlightBookScreen>
 
   @override
   void dispose() {
+    // Dispose of animation controller
     _animationController.dispose();
     super.dispose();
   }
 
-  // Calculate total price based on passengers and class
+  /// Calculates the total price based on passenger count and travel class.
+  ///
+  /// Multiplies the base price by the number of passengers and applies a
+  /// multiplier for Business class (1.5x).
   double get totalPrice {
     double basePrice = double.parse(
       widget.flightDetails['price']!.substring(1),
@@ -65,7 +100,10 @@ class _FlightBookScreenState extends State<FlightBookScreen>
     return basePrice * _passengerCount * classMultiplier;
   }
 
-  // Save flight booking to Firestore
+  /// Saves the flight booking to Firestore and handles user feedback.
+  ///
+  /// Checks if the user is logged in, prepares booking data, saves it to the
+  /// 'flightbookings' collection, and displays a success or error dialog.
   Future<void> _saveFlightBooking() async {
     // Get the current user
     User? user = FirebaseAuth.instance.currentUser;
@@ -457,6 +495,7 @@ class _FlightBookScreenState extends State<FlightBookScreen>
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white, size: 28),
           onPressed: () {
+            // Navigate back to previous screen
             Navigator.of(context).pop();
           },
         ),
@@ -626,7 +665,9 @@ class _FlightBookScreenState extends State<FlightBookScreen>
     );
   }
 
-  // Fancy Flight Details Card
+  /// Builds a styled card displaying flight details.
+  ///
+  /// Displays the departure and destination cities, departure time, and flight price.
   Widget buildFlightDetailsCard() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -726,7 +767,12 @@ class _FlightBookScreenState extends State<FlightBookScreen>
     );
   }
 
-  // Helper method to build info rows
+  /// Builds a row for displaying flight information.
+  ///
+  /// [icon] The icon to display.
+  /// [label] The label for the information.
+  /// [value] The value of the information.
+  /// [highlight] Whether to highlight the value (e.g., for price).
   Widget _buildInfoRow({
     required IconData icon,
     required String label,
@@ -763,7 +809,9 @@ class _FlightBookScreenState extends State<FlightBookScreen>
     );
   }
 
-  // Fancy Passenger Selector
+  /// Builds a styled passenger selector for choosing the number of passengers.
+  ///
+  /// Allows incrementing or decrementing the passenger count.
   Widget buildPassengerSelector() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -846,7 +894,9 @@ class _FlightBookScreenState extends State<FlightBookScreen>
     );
   }
 
-  // Fancy Class Selector
+  /// Builds a styled dropdown for selecting the travel class.
+  ///
+  /// Allows choosing between Economy and Business class.
   Widget buildClassSelector() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
@@ -915,7 +965,9 @@ class _FlightBookScreenState extends State<FlightBookScreen>
     );
   }
 
-  // Fancy Payment Method Selector
+  /// Builds a styled radio button list for selecting the payment method.
+  ///
+  /// Displays available payment methods (e.g., Credit Card, PayPal, Debit Card).
   Widget buildPaymentMethodSelector() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
