@@ -5,8 +5,9 @@ import 'listofhotels.dart';
 import 'profile.dart'; // Importing the ProfileScreen
 import 'flight.dart'; // Importing the FlightScreen
 import 'Experiences.dart';
-import 'TrainHomePage.dart';
+import 'TrainHomePage.dart'; // Train
 import 'AuthScreen.dart';
+import 'BusHomePage.dart'; // Transfers
 
 class DashboardScreen extends StatelessWidget {
   @override
@@ -127,7 +128,7 @@ class DashboardScreen extends StatelessWidget {
                         },
                         child: buildIconCard(Icons.flight, "Flights"),
                       ),
-                      SizedBox(width: 10), // Add spacing between cards
+                      SizedBox(width: 10), // spacing
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
@@ -144,12 +145,8 @@ class DashboardScreen extends StatelessWidget {
                       SizedBox(width: 10),
                       GestureDetector(
                         onTap: () {
-                          // Navigate to the TourPackagesScreen (uncomment if needed)
-                          // Navigator.push(
-                          //   context,
-                          //   MaterialPageRoute(
-                          //     builder: (context) => TourPackagesScreen(),
-                          //   ),
+                          // Navigator.push(context,
+                          //   MaterialPageRoute(builder: (context) => TourPackagesScreen()),
                           // );
                         },
                         child: buildIconCard(Icons.tour, "Tour Packages"),
@@ -194,7 +191,20 @@ class DashboardScreen extends StatelessWidget {
                         child: buildIconCard(Icons.train, "Train"),
                       ),
                       SizedBox(width: 10),
-                      buildIconCard(Icons.airport_shuttle, "Transfers"),
+
+                      // TRANSFERS to BusHomePage
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const BusHomePage(),
+                            ),
+                          );
+                        },
+                        child: buildIconCard(Icons.airport_shuttle, "Transfers"),
+                      ),
+
                       SizedBox(width: 10),
                       GestureDetector(
                         onTap: () {},
@@ -278,22 +288,22 @@ class DashboardScreen extends StatelessWidget {
   // Icon Card for Navigation Bar
   Widget buildIconCard(IconData icon, String title) {
     return Container(
-      width: 70, // Fixed width to control the size
+      width: 70, // Fixed width
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircleAvatar(
-            radius: 25, // Reduced size to fit better
+            radius: 25,
             backgroundColor: Colors.white,
             child: Icon(icon, size: 25, color: Color(0xFF264653)),
           ),
           SizedBox(height: 5),
           Text(
             title,
-            textAlign: TextAlign.center, // Center the text
+            textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               color: Colors.white,
-              fontSize: 11, // Reduced font size
+              fontSize: 11,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -309,14 +319,14 @@ class DashboardScreen extends StatelessWidget {
     required String description,
   }) {
     return Card(
-      color: Colors.white.withOpacity(0.9),
+      color: Colors.white.withValues(0.9),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
             Icon(icon, size: 30, color: Color(0xFF264653)),
             SizedBox(width: 10),
-            Expanded( // Use Expanded to prevent overflow in the description
+            Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
