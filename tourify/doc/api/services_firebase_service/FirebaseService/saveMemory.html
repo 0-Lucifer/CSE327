@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the saveMemory method from the FirebaseService class, for the Dart programming language.">
+  <title>saveMemory method - FirebaseService class - firebase_service library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">tourify</a></li>
+    <li><a href="../../services_firebase_service/">services\firebase_service.dart</a></li>
+    <li><a href="../../services_firebase_service/FirebaseService-class.html">FirebaseService</a></li>
+    <li class="self-crumb">saveMemory static method</li>
+  </ol>
+  <div class="self-name">saveMemory</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="services_firebase_service&#47;FirebaseService-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">saveMemory</span> static method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+<span class="returntype"><a href="https://api.flutter.dev/flutter/flutter_test/Future-class.html">Future</a><span class="signature">&lt;<wbr><span class="type-parameter">void</span>&gt;</span></span>
+<span class="name ">saveMemory</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="saveMemory-param-memory"><span class="type-annotation"><a href="../../models_memory_entry/MemoryEntry-class.html">MemoryEntry</a></span> <span class="parameter-name">memory</span></span></li>
+</ol>)
+
+      
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Saves a memory entry to Firebase with photo uploads.</p>
+<p>Handles the complete process of saving a memory:</p>
+<ul>
+<li>Uploads new photos to Firebase Storage</li>
+<li>Saves memory data to Firestore</li>
+<li>Updates city memory statistics</li>
+</ul>
+<p>The <code>memory</code> parameter contains the memory entry to save.</p>
+<pre class="language-dart"><code class="language-dart">final memory = MemoryEntry(
+  id: 'unique-id',
+  title: 'Beach Day',
+  story: 'Amazing day at the beach',
+  date: DateTime.now(),
+  photos: ['local/photo1.jpg'],
+  cityName: 'Miami',
+);
+await FirebaseService.saveMemory(memory);
+</code></pre>
+<p>Throws <a href="https://api.flutter.dev/flutter/dart-core/Exception-class.html">Exception</a> if the save operation fails.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">static Future&lt;void&gt; saveMemory(MemoryEntry memory) async {
+  print(&#39;🔥 Starting to save memory: ${memory.id}&#39;);
+  print(&#39;🔥 Memory has ${memory.photos.length} photos&#39;);
+
+  try {
+    &#47;&#47; Test Firebase connection first
+    print(&#39;🔥 Testing Firebase connection...&#39;);
+    await _firestore.collection(&#39;test&#39;).doc(&#39;connection&#39;).set({&#39;test&#39;: true});
+    print(&#39;🔥 Firebase connection successful!&#39;);
+
+    &#47;&#47; Upload photos first (skip if no photos)
+    List&lt;String&gt; photoUrls = [];
+
+    &#47;&#47; Only upload photos if there are any
+    if (memory.photos.isNotEmpty) {
+      print(&#39;🔥 Starting photo uploads...&#39;);
+      for (int i = 0; i &lt; memory.photos.length; i++) {
+        String photoPath = memory.photos[i];
+        print(&#39;🔥 Processing photo ${i + 1}: $photoPath&#39;);
+
+        if (photoPath.startsWith(&#39;http&#39;)) {
+          &#47;&#47; Already uploaded
+          print(&#39;🔥 Photo already uploaded: $photoPath&#39;);
+          photoUrls.add(photoPath);
+        } else {
+          &#47;&#47; Check if file exists
+          final file = File(photoPath);
+          if (!await file.exists()) {
+            print(&#39;❌ Photo file does not exist: $photoPath&#39;);
+            continue;
+          }
+
+          print(&#39;🔥 Uploading new photo: $photoPath&#39;);
+          try {
+            String photoUrl = await _uploadPhoto(file, memory.id);
+            print(&#39;🔥 Photo uploaded successfully: $photoUrl&#39;);
+            photoUrls.add(photoUrl);
+          } catch (uploadError) {
+            print(&#39;❌ Failed to upload photo: $uploadError&#39;);
+            &#47;&#47; Continue with other photos or save without this photo
+          }
+        }
+      }
+      print(&#39;🔥 All photos processed. URLs: $photoUrls&#39;);
+    } else {
+      print(&#39;🔥 No photos to upload&#39;);
+    }
+
+    &#47;&#47; Create memory with photo URLs (or empty list)
+    final memoryWithUrls = memory.copyWith(photos: photoUrls);
+    print(&#39;🔥 Saving memory to Firestore...&#39;);
+
+    &#47;&#47; Save to Firestore
+    await _firestore
+        .collection(_memoriesCollection)
+        .doc(memory.id)
+        .set(memoryWithUrls.toJson());
+    print(&#39;🔥 Memory saved to Firestore successfully&#39;);
+
+    &#47;&#47; Update city memory count
+    print(&#39;🔥 Updating city memory count...&#39;);
+    await _updateCityMemoryCount(memory.cityName ?? &#39;Unknown&#39;);
+    print(&#39;🔥 City memory count updated&#39;);
+
+    print(&#39;✅ Memory saved successfully: ${memory.id}&#39;);
+  } catch (e, stackTrace) {
+    print(&#39;❌ Error saving memory: $e&#39;);
+    print(&#39;❌ Stack trace: $stackTrace&#39;);
+    throw Exception(&#39;Failed to save memory: $e&#39;);
+  }
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">tourify</a></li>
+    <li><a href="../../services_firebase_service/">firebase_service</a></li>
+    <li><a href="../../services_firebase_service/FirebaseService-class.html">FirebaseService</a></li>
+    <li class="self-crumb">saveMemory static method</li>
+</ol>
+
+    <h5>FirebaseService class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    tourify
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'add_memory_screen.dart';
 import '../models/city_memory.dart';
 import '../models/memory_entry.dart';
+import '../services/firebase_service.dart';
 
 /// City Memory Detail Screen - Shows photos and stories for a specific city
 /// Displays user's personal diary entries for the selected city
@@ -19,8 +20,8 @@ class CityMemoryDetailScreen extends StatefulWidget {
 
 class _CityMemoryDetailScreenState extends State<CityMemoryDetailScreen> {
   /// List of memory entries for this city
-  /// In real app, this will be fetched from Firebase
-  late List<MemoryEntry> _memoryEntries;
+  List<MemoryEntry> _memoryEntries = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -28,32 +29,29 @@ class _CityMemoryDetailScreenState extends State<CityMemoryDetailScreen> {
     _loadMemoryEntries();
   }
 
-  /// Loads memory entries for the selected city
-  void _loadMemoryEntries() {
-    // Sample data - replace with Firebase data in real implementation
-    _memoryEntries = [
-      MemoryEntry(
-        id: '1',
-        title: 'Beautiful Sunset at ${widget.cityMemory.cityName}',
-        story: 'Had an amazing evening watching the sunset. The colors were absolutely breathtaking!',
-        date: DateTime(2024, 12, 15),
-        photos: ['photo1.jpg', 'photo2.jpg'],
-      ),
-      MemoryEntry(
-        id: '2',
-        title: 'Local Food Experience',
-        story: 'Tried the most delicious local cuisine. The flavors were incredible and the people were so welcoming.',
-        date: DateTime(2024, 12, 14),
-        photos: ['photo3.jpg'],
-      ),
-      MemoryEntry(
-        id: '3',
-        title: 'Exploring Historic Places',
-        story: 'Visited some amazing historical sites. Learned so much about the rich culture and heritage.',
-        date: DateTime(2024, 12, 13),
-        photos: ['photo4.jpg', 'photo5.jpg', 'photo6.jpg'],
-      ),
-    ];
+  /// Loads memory entries for the selected city from Firebase
+  Future<void> _loadMemoryEntries() async {
+    print('🔥 Loading memories for city: ${widget.cityMemory.cityName}');
+    
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      
+      final memories = await FirebaseService.getMemoriesForCity(widget.cityMemory.cityName);
+      print('🔥 Loaded ${memories.length} memories from Firebase');
+      
+      setState(() {
+        _memoryEntries = memories;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('❌ Error loading memories: $e');
+      setState(() {
+        _memoryEntries = [];
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -96,9 +94,11 @@ class _CityMemoryDetailScreenState extends State<CityMemoryDetailScreen> {
             children: [
               _buildCityHeader(),
               Expanded(
-                child: _memoryEntries.isEmpty
-                    ? _buildEmptyState()
-                    : _buildMemoryList(),
+                child: _isLoading
+                    ? _buildLoadingState()
+                    : _memoryEntries.isEmpty
+                        ? _buildEmptyState()
+                        : _buildMemoryList(),
               ),
             ],
           ),
@@ -376,6 +376,28 @@ class _CityMemoryDetailScreenState extends State<CityMemoryDetailScreen> {
     );
   }
 
+  /// Builds loading state while fetching memories
+  Widget _buildLoadingState() {
+    return const Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(
+            color: Color(0xFF1A237E),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'Loading memories...',
+            style: TextStyle(
+              color: Color(0xFF1A237E),
+              fontSize: 16,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Builds empty state when no memories exist
   Widget _buildEmptyState() {
     return Center(
@@ -459,9 +481,8 @@ class _CityMemoryDetailScreenState extends State<CityMemoryDetailScreen> {
       ),
     ).then((result) {
       if (result != null && result is MemoryEntry) {
-        setState(() {
-          _memoryEntries.insert(0, result);
-        });
+        // Reload memories from Firebase to get the latest data
+        _loadMemoryEntries();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Memory added successfully!'),

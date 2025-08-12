@@ -63,39 +63,73 @@ class FirebaseService {
   /// 
   /// Throws [Exception] if the save operation fails.
   static Future<void> saveMemory(MemoryEntry memory) async {
+    print('🔥 Starting to save memory: ${memory.id}');
+    print('🔥 Memory has ${memory.photos.length} photos');
+    
     try {
+      // Test Firebase connection first
+      print('🔥 Testing Firebase connection...');
+      await _firestore.collection('test').doc('connection').set({'test': true});
+      print('🔥 Firebase connection successful!');
+      
       // Upload photos first (skip if no photos)
       List<String> photoUrls = [];
       
       // Only upload photos if there are any
       if (memory.photos.isNotEmpty) {
-        for (String photoPath in memory.photos) {
+        print('🔥 Starting photo uploads...');
+        for (int i = 0; i < memory.photos.length; i++) {
+          String photoPath = memory.photos[i];
+          print('🔥 Processing photo ${i + 1}: $photoPath');
+          
           if (photoPath.startsWith('http')) {
             // Already uploaded
+            print('🔥 Photo already uploaded: $photoPath');
             photoUrls.add(photoPath);
           } else {
-            // Upload new photo
-            String photoUrl = await _uploadPhoto(File(photoPath), memory.id);
-            photoUrls.add(photoUrl);
+            // Check if file exists
+            final file = File(photoPath);
+            if (!await file.exists()) {
+              print('❌ Photo file does not exist: $photoPath');
+              continue;
+            }
+            
+            print('🔥 Uploading new photo: $photoPath');
+            try {
+              String photoUrl = await _uploadPhoto(file, memory.id);
+              print('🔥 Photo uploaded successfully: $photoUrl');
+              photoUrls.add(photoUrl);
+            } catch (uploadError) {
+              print('❌ Failed to upload photo: $uploadError');
+              // Continue with other photos or save without this photo
+            }
           }
         }
+        print('🔥 All photos processed. URLs: $photoUrls');
+      } else {
+        print('🔥 No photos to upload');
       }
 
       // Create memory with photo URLs (or empty list)
       final memoryWithUrls = memory.copyWith(photos: photoUrls);
+      print('🔥 Saving memory to Firestore...');
 
-      // Save to Firestore (this should work without Storage)
+      // Save to Firestore
       await _firestore
           .collection(_memoriesCollection)
           .doc(memory.id)
           .set(memoryWithUrls.toJson());
+      print('🔥 Memory saved to Firestore successfully');
 
       // Update city memory count
+      print('🔥 Updating city memory count...');
       await _updateCityMemoryCount(memory.cityName ?? 'Unknown');
+      print('🔥 City memory count updated');
 
-      print('Memory saved successfully: ${memory.id}');
-    } catch (e) {
-      print('Error saving memory: $e');
+      print('✅ Memory saved successfully: ${memory.id}');
+    } catch (e, stackTrace) {
+      print('❌ Error saving memory: $e');
+      print('❌ Stack trace: $stackTrace');
       throw Exception('Failed to save memory: $e');
     }
   }
@@ -112,22 +146,67 @@ class FirebaseService {
   /// 
   /// Throws [Exception] if the upload fails.
   static Future<String> _uploadPhoto(File photoFile, String memoryId) async {
+    print('📸 Starting photo upload...');
+    print('📸 File path: ${photoFile.path}');
+    print('📸 File exists: ${await photoFile.exists()}');
+    print('📸 File size: ${await photoFile.length()} bytes');
+    
     try {
       final String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final Reference ref = _storage
-          .ref()
-          .child('memory_photos')
-          .child(memoryId)
-          .child(fileName);
+      final String storagePath = 'memory_photos/$memoryId/$fileName';
+      print('📸 Storage path: $storagePath');
+      
+      final Reference ref = _storage.ref().child(storagePath);
+      print('📸 Storage reference created');
 
-      final UploadTask uploadTask = ref.putFile(photoFile);
-      final TaskSnapshot snapshot = await uploadTask;
+      print('📸 Starting upload task with metadata...');
+      
+      // Add metadata to help with upload
+      final metadata = SettableMetadata(
+        contentType: 'image/jpeg',
+        customMetadata: {
+          'memoryId': memoryId,
+          'uploadedAt': DateTime.now().toIso8601String(),
+        },
+      );
+      
+      final UploadTask uploadTask = ref.putFile(photoFile, metadata);
+      
+      // Monitor upload progress
+      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+        double progress = snapshot.bytesTransferred / snapshot.totalBytes;
+        print('📸 Upload progress: ${(progress * 100).toStringAsFixed(1)}%');
+        print('📸 State: ${snapshot.state}');
+      });
+      
+      // Wait for upload with timeout
+      final TaskSnapshot snapshot = await uploadTask.timeout(
+        const Duration(minutes: 2),
+        onTimeout: () {
+          print('❌ Upload timed out after 2 minutes');
+          uploadTask.cancel();
+          throw Exception('Upload timed out');
+        },
+      );
+      
+      print('📸 Upload completed, getting download URL...');
+      
       final String downloadUrl = await snapshot.ref.getDownloadURL();
+      print('📸 Download URL obtained: $downloadUrl');
 
       return downloadUrl;
-    } catch (e) {
-      print('Error uploading photo: $e');
-      throw Exception('Failed to upload photo: $e');
+    } catch (e, stackTrace) {
+      print('❌ Error uploading photo: $e');
+      print('❌ Stack trace: $stackTrace');
+      
+      // Check if it's a specific Firebase Storage error
+      if (e.toString().contains('cancelled')) {
+        throw Exception('Upload was cancelled - check Firebase Storage rules');
+      } else if (e.toString().contains('permission')) {
+        throw Exception('Permission denied - check Firebase Storage rules');
+      } else {
+        throw Exception('Failed to upload photo: $e');
+      }
     }
   }
 

@@ -16,38 +16,15 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      return web;
-    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
-      case TargetPlatform.iOS:
-        return ios;
-      case TargetPlatform.macOS:
-        return macos;
-      case TargetPlatform.windows:
-        return windows;
-      case TargetPlatform.linux:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for linux - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
       default:
         throw UnsupportedError(
-          'DefaultFirebaseOptions are not supported for this platform.',
+          'DefaultFirebaseOptions are only configured for Android platform.',
         );
     }
   }
-
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'your-web-api-key',
-    appId: '1:your-project:web:your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'tourify-nahian-memories',
-    authDomain: 'tourify-nahian-memories.firebaseapp.com',
-    storageBucket: 'tourify-nahian-memories.appspot.com',
-  );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAT0S9minMd0mmyfb9xjiCFPX-O5hKLx6Q',
@@ -55,32 +32,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '992729470612',
     projectId: 'tourify-222',
     storageBucket: 'tourify-222.firebasestorage.app',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'your-ios-api-key',
-    appId: '1:your-project:ios:your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'tourify-nahian-memories',
-    storageBucket: 'tourify-nahian-memories.appspot.com',
-    iosBundleId: 'com.example.tourify',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'your-ios-api-key',
-    appId: '1:your-project:ios:your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'tourify-nahian-memories',
-    storageBucket: 'tourify-nahian-memories.appspot.com',
-    iosBundleId: 'com.example.tourify',
-  );
-
-  static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'your-web-api-key',
-    appId: '1:your-project:web:your-app-id',
-    messagingSenderId: 'your-sender-id',
-    projectId: 'tourify-nahian-memories',
-    authDomain: 'tourify-nahian-memories.firebaseapp.com',
-    storageBucket: 'tourify-nahian-memories.appspot.com',
+    measurementId: 'G-JLN1GZCF71',
   );
 }
