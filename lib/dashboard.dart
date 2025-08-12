@@ -319,7 +319,7 @@ class DashboardScreen extends StatelessWidget {
     required String description,
   }) {
     return Card(
-      color: Colors.white.withValues(0.9),
+      color: Colors.white.withOpacity(0.9),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
