@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // hotelHomePage.dart
 import 'package:flutter/material.dart';
 import 'hotel_controller.dart';
@@ -177,20 +176,3 @@ class HotelListSheet extends StatelessWidget {
     );
   }
 }
-=======
-import 'package:flutter/material.dart';
-
-class HotelHomePage extends StatelessWidget {
-  const HotelHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Hotel Home'),
-      ),
-      body: Container(),
-    );
-  }
-}
->>>>>>> b179ffad38b82b85779352ced9623b2c0a2bb0f8
