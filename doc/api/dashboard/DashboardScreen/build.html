@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the build method from the DashboardScreen class, for the Dart programming language.">
+  <title>build method - DashboardScreen class - dashboard library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../../static-assets/styles.css?v1">
+  <link rel="icon" href="../../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../../index.html">tourify</a></li>
+    <li><a href="../../dashboard/">dashboard.dart</a></li>
+    <li><a href="../../dashboard/DashboardScreen-class.html">DashboardScreen</a></li>
+    <li class="self-crumb">build method</li>
+  </ol>
+  <div class="self-name">build</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <button class="toggle" id="theme-button" title="Toggle between light and dark mode" aria-label="Light and dark mode toggle">
+    <span id="dark-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      dark_mode
+    </span>
+    <span id="light-theme-button" class="material-symbols-outlined" aria-hidden="true">
+      light_mode
+    </span>
+  </button>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="dashboard&#47;DashboardScreen-class-sidebar.html"
+    data-below-sidebar="">
+    <div>
+<h1><span class="kind-method">build</span> method 
+</h1></div>
+
+    <section class="multi-line-signature">
+      
+  <div>
+    <ol class="annotation-list">
+        <li>@<a href="https://api.flutter.dev/flutter/dart-core/override-constant.html">override</a></li>
+    </ol>
+  </div>
+<span class="returntype"><a href="https://api.flutter.dev/flutter/widgets/Widget-class.html">Widget</a></span>
+<span class="name ">build</span>(<wbr><ol class="parameter-list single-line"> <li><span class="parameter" id="build-param-context"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/widgets/BuildContext-class.html">BuildContext</a></span> <span class="parameter-name">context</span></span></li>
+</ol>)
+
+      <div class="features"><span class="feature">override</span></div>
+
+    </section>
+    
+<section class="desc markdown">
+  <p>Creates the dashboard screen widget.</p>
+</section>
+
+
+    
+<section class="summary source-code" id="source">
+  <h2><span>Implementation</span></h2>
+  <pre class="language-dart"><code class="language-dart">@override
+Widget build(BuildContext context) {
+  &#47;&#47; Initialize controller in build
+  DashboardController controller = DashboardController(context);
+  return Scaffold(
+    body: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF007E95),
+            Color(0xFF004D65),
+            Color(0xFF003653),
+          ],
+          stops: [0.0, 0.5, 1.0],
+        ),
+      ),
+      child: SafeArea(
+        child: Column(
+          children: [
+            &#47;&#47; Top Navigation Bar
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  &#47;&#47; Profile navigation button
+                  GestureDetector(
+                    onTap: controller.navigateToProfile,
+                    child: CircleAvatar(
+                      radius: 22,
+                      backgroundColor: Colors.white,
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Color(0xFF003B53),
+                        child: Icon(
+                          Icons.person,
+                          size: 28,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  &#47;&#47; Dashboard title
+                  Text(
+                    &#39;Tourify Dashboard&#39;,
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  &#47;&#47; Logout button
+                  GestureDetector(
+                    onTap: controller.navigateToAuth,
+                    child: Icon(Icons.logout, color: Colors.white, size: 28),
+                  ),
+                ],
+              ),
+            ),
+
+            &#47;&#47; Search Bar
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 6,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: &quot;Where to?&quot;,
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.search, color: Color(0xFF264653)),
+                  ),
+                ),
+              ),
+            ),
+
+            &#47;&#47; Icon Menu (Flights, Hotels, Car Rentals, etc.)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 10,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  &#47;&#47; Flights navigation
+                  GestureDetector(
+                    onTap: controller.navigateToFlight,
+                    child: buildIconCard(Icons.flight, &quot;Flights&quot;),
+                  ),
+                  &#47;&#47; Hotels navigation
+                  GestureDetector(
+                    onTap: controller.navigateToHotel,
+                    child: buildIconCard(Icons.hotel, &quot;Hotels&quot;),
+                  ),
+                  &#47;&#47; Car Rentals (not implemented)
+                  buildIconCard(Icons.directions_car, &quot;Car Rentals&quot;),
+                  &#47;&#47; Tour Packages navigation
+                  GestureDetector(
+                    onTap: controller.navigateToTourPackages,
+                    child: buildIconCard(Icons.tour, &quot;Tour Packages&quot;),
+                  ),
+                ],
+              ),
+            ),
+
+            &#47;&#47; Second Row for Experiences, Trains, Transfers, Travel Guides
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 10,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  &#47;&#47; Experiences navigation
+                  GestureDetector(
+                    onTap: controller.navigateToExperience,
+                    child: buildIconCard(Icons.explore, &quot;Experiences&quot;),
+                  ),
+                  &#47;&#47; Train navigation
+                  GestureDetector(
+                    onTap: controller.navigateToTrain,
+                    child: buildIconCard(Icons.train, &quot;Train&quot;),
+                  ),
+                  &#47;&#47; Transfers (not implemented)
+                  buildIconCard(Icons.airport_shuttle, &quot;Transfers&quot;),
+                  &#47;&#47; Travel Guides navigation
+                  GestureDetector(
+                    onTap: controller.navigateToTravelGuides,
+                    child: buildIconCard(Icons.map, &quot;Travel Guides&quot;),
+                  ),
+                ],
+              ),
+            ),
+
+            &#47;&#47; Additional Features Section
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 20,
+              ),
+              child: Column(
+                children: [
+                  &#47;&#47; Customer Support navigation
+                  GestureDetector(
+                    onTap: controller.navigateToCustomerSupport,
+                    child: buildFeatureCard(
+                      icon: Icons.support_agent,
+                      title: &quot;Customer Support in Seconds&quot;,
+                      description: &quot;Get instant help with your bookings.&quot;,
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  &#47;&#47; Travel Worry-free card
+                  buildFeatureCard(
+                    icon: Icons.verified_user,
+                    title: &quot;Travel Worry-free&quot;,
+                    description: &quot;Enjoy a seamless travel experience.&quot;,
+                  ),
+                  SizedBox(height: 20),
+                  &#47;&#47; Rewards &amp; Discounts navigation
+                  GestureDetector(
+                    onTap: controller.navigateToRewardsDiscounts,
+                    child: buildFeatureCard(
+                      icon: Icons.discount,
+                      title: &quot;Exclusive Rewards &amp; Discounts&quot;,
+                      description: &quot;Save with exclusive deals and rewards.&quot;,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            &#47;&#47; Popular Destinations Section
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 10,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  &#47;&#47; Section title
+                  Text(
+                    &quot;Where to next?&quot;,
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  &#47;&#47; Horizontal scrollable destination cards
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        buildDestinationCard(&quot;Cox&#39;s Bazar&quot;, controller),
+                        buildDestinationCard(&quot;Teknaf&quot;, controller),
+                        buildDestinationCard(&quot;Bandarban&quot;, controller),
+                        buildDestinationCard(&quot;Sreemangal&quot;, controller),
+                        buildDestinationCard(&quot;Sajek&quot;, controller),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}</code></pre>
+</section>
+
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../../index.html">tourify</a></li>
+    <li><a href="../../dashboard/">dashboard</a></li>
+    <li><a href="../../dashboard/DashboardScreen-class.html">DashboardScreen</a></li>
+    <li class="self-crumb">build method</li>
+</ol>
+
+    <h5>DashboardScreen class</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div><!--/.sidebar-offcanvas-->
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+</div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    tourify
+      1.0.0+1
+  </span>
+  
+</footer>
+
+
+<script src="../../static-assets/highlight.pack.js?v1"></script>
+<script src="../../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
