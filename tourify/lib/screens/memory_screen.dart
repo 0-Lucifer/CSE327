@@ -39,19 +39,19 @@ class _MemoryScreenState extends State<MemoryScreen> {
     CityMemory(
       cityName: 'Dhaka',
       photoCount: 15,
-      lastVisited: DateTime(2024, 12, 15),
+      lastVisited: DateTime(2025, 7, 15),
       thumbnailPath: 'assets/images/dhaka_thumb.jpg',
     ),
     CityMemory(
       cityName: "Cox's Bazar",
       photoCount: 28,
-      lastVisited: DateTime(2024, 11, 20),
+      lastVisited: DateTime(2025, 7, 20),
       thumbnailPath: 'assets/images/coxs_bazar_thumb.jpg',
     ),
     CityMemory(
       cityName: 'Sylhet',
       photoCount: 12,
-      lastVisited: DateTime(2024, 10, 5),
+      lastVisited: DateTime(2025, 7, 5),
       thumbnailPath: 'assets/images/sylhet_thumb.jpg',
     ),
   ];
