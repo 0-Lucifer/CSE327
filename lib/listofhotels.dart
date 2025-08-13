@@ -1,11 +1,8 @@
-<<<<<<< HEAD
 // listOfHotel.dart
 
 /// A predefined list of hotels grouped by location.
 /// The key is the location name (e.g., "Cox's Bazar").
 /// The value is a list of hotel details stored as maps.
-=======
->>>>>>> b179ffad38b82b85779352ced9623b2c0a2bb0f8
 final Map<String, List<Map<String, dynamic>>> hotels = {
   "Cox's Bazar": [
     {
@@ -94,8 +91,4 @@ final Map<String, List<Map<String, dynamic>>> hotels = {
       "discount": "8% Off",
     },
   ],
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> b179ffad38b82b85779352ced9623b2c0a2bb0f8
