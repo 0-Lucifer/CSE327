@@ -7,6 +7,8 @@ Tourify is a Flutter-based mobile application designed to streamline travel plan
 - **User Authentication**: Secure sign-up and login using Firebase Authentication with email and password.
 - **Profile Management**: View and manage user details (username, email, phone, and profile photo) stored in Firestore.
 - **Flight Booking**: Browse and book flights with details stored in Firestore (supports future expansion for bus, train, and hotel bookings).
+- **Bus Booking**: Search and reserve bus tickets with route, seat and fare details.
+- **Train Booking**: Browse and book train tickets with trip, seat and price information.
 - **Animated UI**: Engaging background animations (e.g., flying plane, floating clouds) for an immersive experience.
 - **Responsive Design**: Built with Flutter for cross-platform compatibility (iOS and Android).
 - **Firebase Integration**: Uses Firestore for user and booking data, Firebase Storage for profile photos, and Firebase Authentication for user management.
