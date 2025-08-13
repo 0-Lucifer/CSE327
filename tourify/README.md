@@ -1,4 +1,4 @@
-# tourify
+# Tourify
 
 Flutter project.
 ## Memory, Diary & Photo Album Section
@@ -11,7 +11,7 @@ Section for capturing and organizing your travel memories with photos, stories, 
 
 ## Screenshots
 
-<img src="tourify%20Screenshots/1.png" width="150"> <img src="tourify%20Screenshots/2.png" width="150"> <img src="tourify%20Screenshots/4.png" width="150"> <img src="tourify%20Screenshots/5.png" width="150"> <img src="tourify%20Screenshots/6.png" width="150">
+<img src="tourify%20Screenshots/1.png" width="160"> <img src="tourify%20Screenshots/orginal 2.png" width="160"> <img src="tourify%20Screenshots/2.png" width="160"> <img src="tourify%20Screenshots/4.png" width="160"> <img src="tourify%20Screenshots/5.png" width="160"> <img src="tourify%20Screenshots/6.png" width="160">
 
 ## Features
 
@@ -33,8 +33,8 @@ This is a Flutter project focusing on Memory, Diary & Photo Album functionality.
 
 ### Installation
 ```bash
-git clone https://github.com/yourusername/tourify.git
-cd tourify
+git clone -b nahian-2212705042 https://github.com/0-Lucifer/CSE327.git
+cd CSE327/tourify
 flutter pub get
 flutter run
 ```
