@@ -12,6 +12,9 @@ Tourify is a Flutter-based mobile application designed to streamline travel plan
 - **Animated UI**: Engaging background animations (e.g., flying plane, floating clouds) for an immersive experience.
 - **Responsive Design**: Built with Flutter for cross-platform compatibility (iOS and Android).
 - **Firebase Integration**: Uses Firestore for user and booking data, Firebase Storage for profile photos, and Firebase Authentication for user management.
+- **Hotel Booking**: Select a destination, view hotels, choose rooms and a payment method, see the total, and confirm the reservation.
+- **Car Rental**: Browse cars, set rental dates/options, review the price, choose payment, and confirm the booking.
+
 
 ## Prerequisites
 
