@@ -1,6 +1,11 @@
 import 'train_model.dart';
 
+/// Train Booking — Controller layer
+///
+/// Provides read-only access to in-memory train data grouped by origin.
+/// Views call [getStations] and [getTrainsByOrigin] to retrieve data.
 class TrainController {
+  /// In-memory dataset keyed by origin station/city.
   final Map<String, List<Train>> _trainData = {
     'Dhaka': [
       Train(name: 'Sundarban Express', type: 'InterCity', seats: 400, pricePerSeat: 12.0),
@@ -20,7 +25,9 @@ class TrainController {
     ],
   };
 
+  /// Returns all available origin station names.
   List<String> getStations() => _trainData.keys.toList();
 
+  /// Returns trains departing from the given [origin]. Empty if none found.
   List<Train> getTrainsByOrigin(String origin) => _trainData[origin] ?? [];
 }

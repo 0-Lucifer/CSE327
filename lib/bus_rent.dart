@@ -48,7 +48,7 @@ class _BusRentState extends State<BusRent> {
     return Scaffold(
       appBar: AppBar(
         // Name it "Transfers" to match your dashboard label.
-        title: const Text('Transfers (Dhaka)'),
+        title: const Text('Transfers'),
         centerTitle: true,
       ),
       body: Padding(
